@@ -1,0 +1,4 @@
+{
+    "connection_string": "root:root@tcp(127.0.0.1:3306)/gosql",
+    "port": 8000
+}
