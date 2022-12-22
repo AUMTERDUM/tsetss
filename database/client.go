@@ -22,22 +22,33 @@ func Connect(connectionString string) {
 
 func MigrateUSER() {
 	Instance.AutoMigrate(&entities.User{})
-	log.Println("Database Migration Completed...")
+	log.Println("Database USER Completed...")
 }
 
 func MigrateSYSTEM() {
 	Instance.AutoMigrate(&entities.System{})
-	log.Println("Database Migration Completed...")
+	log.Println("Database SYSTEM Completed...")
 }
 
 func MigratePROBLEM() {
 	Instance.AutoMigrate(&entities.Problem{})
-	log.Println("Database Migration Completed...")
+	log.Println("Database PROBLEM Completed...")
 }
 
 func MigrateLEVEL() {
 	Instance.AutoMigrate(&entities.Level{})
-	log.Println("Database Migration Completed...")
+	log.Println("Database LEVEL Completed...")
 }
+
+func MigrateCONTACT() {
+	Instance.AutoMigrate(&entities.Contact{})
+	log.Println("Database CONTACT Completed...")
+}
+
+func MigrateANGENCY() {
+	Instance.AutoMigrate(&entities.Agency{})
+	log.Println("Database AGENCY Completed...")
+}
+
 
 

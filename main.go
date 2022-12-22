@@ -36,6 +36,8 @@ func main() {
 	database.MigrateSYSTEM()
 	database.MigratePROBLEM()
 	database.MigrateLEVEL()
+	database.MigrateCONTACT()
+	database.MigrateANGENCY()
 
 
 	// Initialize the router
@@ -73,5 +75,16 @@ func RegisterProductRoutes(router *mux.Router) {
 	router.HandleFunc("/level/{id}", settings.GetLevelById).Methods("GET")
 	router.HandleFunc("/level/{id}", settings.UpdateLevel).Methods("PATCH")
 	router.HandleFunc("/level/{id}", settings.DeleteLevel).Methods("DELETE")
+	router.HandleFunc("/contact", settings.CreateContact).Methods("POST")
+	router.HandleFunc("/contacts", settings.GetContacts).Methods("GET")
+	router.HandleFunc("/contact/{id}", settings.GetContactById).Methods("GET")
+	router.HandleFunc("/contact/{id}", settings.UpdateContact).Methods("PATCH")
+	router.HandleFunc("/contact/{id}", settings.DeleteContact).Methods("DELETE")
+	router.HandleFunc("/agency", settings.CreateAgency).Methods("POST")
+	router.HandleFunc("/agencys", settings.GetAgencys).Methods("GET")
+	router.HandleFunc("/agency/{id}", settings.GetAgencyById).Methods("GET")
+	router.HandleFunc("/agency/{id}", settings.UpdateAgency).Methods("PATCH")                                         
+	router.HandleFunc("/agency/{id}", settings.DeleteAgency).Methods("DELETE")
+
 }
 

@@ -22,3 +22,15 @@ type Level struct {
 	Name string `json:"name"`
 	Time int    `json:"time"` 
 }
+
+type Contact struct {
+	ID   int    `json:"id"`
+	Name string `json:"name"`
+}
+
+type Agency struct {
+	ID   int    `json:"id"`
+	Name string `json:"name"`
+}
+
+
