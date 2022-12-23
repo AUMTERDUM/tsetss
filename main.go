@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"golang-crud-rest-api/settings"
 	"golang-crud-rest-api/database"
+	"golang-crud-rest-api/problemrecord"
 	"log"
 	"net/http"
 
@@ -11,6 +12,7 @@ import (
 	"gorm.io/gorm"
 	"github.com/rs/cors"
 )
+
 
 var DB *gorm.DB
 
@@ -38,6 +40,7 @@ func main() {
 	database.MigrateLEVEL()
 	database.MigrateCONTACT()
 	database.MigrateANGENCY()
+	database.MigratePROBLEMRECORD()
 
 
 	// Initialize the router
@@ -85,6 +88,9 @@ func RegisterProductRoutes(router *mux.Router) {
 	router.HandleFunc("/agency/{id}", settings.GetAgencyById).Methods("GET")
 	router.HandleFunc("/agency/{id}", settings.UpdateAgency).Methods("PATCH")                                         
 	router.HandleFunc("/agency/{id}", settings.DeleteAgency).Methods("DELETE")
+	router.HandleFunc("/problemrecord", problemrecord.CreateProblemRecord).Methods("POST")
+	router.HandleFunc("/problemrecords", problemrecord.GetProblemRecords).Methods("GET")
+	router.HandleFunc("/problemrecord/{id}", problemrecord.GetProblemRecordById).Methods("GET")
 
 }
 

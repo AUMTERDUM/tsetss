@@ -50,5 +50,12 @@ func MigrateANGENCY() {
 	log.Println("Database AGENCY Completed...")
 }
 
+func MigratePROBLEMRECORD() {
+	Instance.AutoMigrate(&entities.ProblemRecord{})
+	log.Println("Database PROBLEMRECORD Completed...")
+}
+
+
+
 
 
