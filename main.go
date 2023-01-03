@@ -1,4 +1,4 @@
-package main
+package main 
 
 import (
 	"fmt"
@@ -41,6 +41,7 @@ func main() {
 	database.MigrateCONTACT()
 	database.MigrateANGENCY()
 	database.MigratePROBLEMRECORD()
+	database.MigrateUPLOAD()
 
 
 	// Initialize the router
@@ -55,6 +56,7 @@ func main() {
 	log.Printf("Starting Server on port %s\n", AppConfig.Port)
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", AppConfig.Port), handler))
 	//http.ListenAndServe(":8080", handler)
+	
 }
 
 func RegisterProductRoutes(router *mux.Router) {
@@ -90,7 +92,10 @@ func RegisterProductRoutes(router *mux.Router) {
 	router.HandleFunc("/agency/{id}", settings.DeleteAgency).Methods("DELETE")
 	router.HandleFunc("/problemrecord", problemrecord.CreateProblemRecord).Methods("POST")
 	router.HandleFunc("/problemrecords", problemrecord.GetProblemRecords).Methods("GET")
-	router.HandleFunc("/problemrecord/{id}", problemrecord.GetProblemRecordById).Methods("GET")
+	router.HandleFunc("/problemrecord/{id}", problemrecord.GetProblemRecord).Methods("GET")
+	//router.HandleFunc("/problemrecord/upload", problemrecord.Uploadfile).Methods("POST")
+
+	
 
 }
 

@@ -5,43 +5,36 @@ import (
 	"golang-crud-rest-api/database"
 	"golang-crud-rest-api/entities"
 	"net/http"
-
 	"github.com/gorilla/mux"
 )
 
-func CreateProblemRecord(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	var product entities.ProblemRecord
-	json.NewDecoder(r.Body).Decode(&product)
-	database.Instance.Create(&product)
-	json.NewEncoder(w).Encode(product)
-}
+//use form-data
 
-func GetProblemRecordById(w http.ResponseWriter, r *http.Request) {
-	productId := mux.Vars(r)["id"]
-	if checkIfProblemRecordExists(productId) == false { 
-		json.NewEncoder(w).Encode("Product Not Found!")
-		return
-	}
-	var product entities.ProblemRecord
-	database.Instance.First(&product, productId)
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(product)
+func CreateProblemRecord(w http.ResponseWriter, r *http.Request) {
+	var problemrecord entities.ProblemRecord
+	_ = json.NewDecoder(r.Body).Decode(&problemrecord)
+	database.Instance.Create(&problemrecord)
+	json.NewEncoder(w).Encode(problemrecord)
+	Uploadfile(w, r)
 }
 
 func GetProblemRecords(w http.ResponseWriter, r *http.Request) {
-	var products []entities.ProblemRecord
-	database.Instance.Find(&products)
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(products)
+	var problemrecords []entities.ProblemRecord
+	database.Instance.Find(&problemrecords)
+	json.NewEncoder(w).Encode(problemrecords)
 }
 
-func checkIfProblemRecordExists(id string) bool {
-	var product entities.ProblemRecord
-	database.Instance.First(&product, id)
-	if product.ID == 0 {
-		return false
-	}
-	return true
+func GetProblemRecord(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+	var problemrecord entities.ProblemRecord
+	database.Instance.First(&problemrecord, params["id"])
+	json.NewEncoder(w).Encode(problemrecord)
 }
+
+
+
+
+
+
+
+
