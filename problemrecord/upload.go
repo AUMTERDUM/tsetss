@@ -15,7 +15,7 @@ import (
 
 func Uploadfile(w http.ResponseWriter, r *http.Request) {
 	//r.ParseMultipartForm(10 * 1024 * 1024)
-	file, handler, err := r.FormFile("files")
+	file, handler, err := r.FormFile("problem_records")
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -49,7 +49,7 @@ func Uploadfile(w http.ResponseWriter, r *http.Request) {
 	}
 	defer dest.Close()
 
-	database.Instance.Create(&entities.File{
+	database.Instance.Create(&entities.ProblemRecord{
 		File_name:      file_name,
 		Path_file:      path_file,
 		File_extension: ext,

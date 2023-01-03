@@ -1,36 +1,34 @@
-package main 
+package main
 
 import (
 	"fmt"
-	"golang-crud-rest-api/settings"
 	"golang-crud-rest-api/database"
 	"golang-crud-rest-api/problemrecord"
+	"golang-crud-rest-api/settings"
 	"log"
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"gorm.io/gorm"
 	"github.com/rs/cors"
+	"gorm.io/gorm"
 )
-
 
 var DB *gorm.DB
 
 func main() {
 
-    cors := cors.New(cors.Options{
-        AllowedOrigins: []string{"*"},
-        AllowedMethods: []string{
-            http.MethodPost,
-            http.MethodGet,
-        },
-        AllowedHeaders:   []string{"*"},
-        AllowCredentials: false,
-    })
-	
+	cors := cors.New(cors.Options{
+		AllowedOrigins: []string{"*"},
+		AllowedMethods: []string{
+			http.MethodPost,
+			http.MethodGet,
+		},
+		AllowedHeaders:   []string{"*"},
+		AllowCredentials: false,
+	})
+
 	// Load Configurations from config.json using Viper
 	LoadAppConfig()
-
 
 	// Initialize Database
 	database.Connect(AppConfig.ConnectionString)
@@ -41,8 +39,7 @@ func main() {
 	database.MigrateCONTACT()
 	database.MigrateANGENCY()
 	database.MigratePROBLEMRECORD()
-	database.MigrateUPLOAD()
-
+	///database.MigrateUPLOAD()
 
 	// Initialize the router
 	router := mux.NewRouter().StrictSlash(true)
@@ -50,13 +47,12 @@ func main() {
 	RegisterProductRoutes(router)
 	handler := cors.Handler(router)
 
-
 	//test:= fmt.Sprintf("Starting Server on port %s", AppConfig.Port)
 	// Start the server
 	log.Printf("Starting Server on port %s\n", AppConfig.Port)
-	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", AppConfig.Port), handler))
+	log.Fatal(http.ListenAndServe(fmt.Sprintf("192.168.20.17:%s", AppConfig.Port), handler))
 	//http.ListenAndServe(":8080", handler)
-	
+
 }
 
 func RegisterProductRoutes(router *mux.Router) {
@@ -88,14 +84,11 @@ func RegisterProductRoutes(router *mux.Router) {
 	router.HandleFunc("/agency", settings.CreateAgency).Methods("POST")
 	router.HandleFunc("/agencys", settings.GetAgencys).Methods("GET")
 	router.HandleFunc("/agency/{id}", settings.GetAgencyById).Methods("GET")
-	router.HandleFunc("/agency/{id}", settings.UpdateAgency).Methods("PATCH")                                         
+	router.HandleFunc("/agency/{id}", settings.UpdateAgency).Methods("PATCH")
 	router.HandleFunc("/agency/{id}", settings.DeleteAgency).Methods("DELETE")
 	router.HandleFunc("/problemrecord", problemrecord.CreateProblemRecord).Methods("POST")
 	router.HandleFunc("/problemrecords", problemrecord.GetProblemRecords).Methods("GET")
 	router.HandleFunc("/problemrecord/{id}", problemrecord.GetProblemRecord).Methods("GET")
 	//router.HandleFunc("/problemrecord/upload", problemrecord.Uploadfile).Methods("POST")
 
-	
-
 }
-

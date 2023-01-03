@@ -47,6 +47,11 @@ type ProblemRecord struct {
 	Problemtype     string    `json:"problemttype"`
 	Level           string    `json:"level"`
 	Problem         string    `json:"problem"`
+	File_name       string `json:"file_name"`
+	Path_file       string `json:"path_file"`
+	File_extension  string `json:"file_extension"`
+	File_size       int    `json:"file_size"`
+	Status          int    `json:"status"`
 
 }
 
@@ -64,11 +69,11 @@ type CompleteRecord struct {
 	complete_at   time.Time `json:"complete_at"`
 }
 
-type File struct {
-	Id             int    `json:"id"`
-	File_name      string `json:"file_name"`
-	Path_file      string `json:"path_file"`
-	File_extension string `json:"file_extension"`
-	File_size      int    `json:"file_size"`
-	Status         int    `json:"status"`
-}
+// type File struct {
+// 	Id             int    `json:"id"`
+// 	File_name      string `json:"file_name"`
+// 	Path_file      string `json:"path_file"`
+// 	File_extension string `json:"file_extension"`
+// 	File_size      int    `json:"file_size"`
+// 	Status         int    `json:"status"`
+// }
