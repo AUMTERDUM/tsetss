@@ -58,15 +58,15 @@ type ProblemRecord struct {
 
 type ProblemSender struct {
 	ID              int    	`gorm:"primaryKey" json:"id"`
-	Process   		string   `gorm:"type:varchar(255)" json:"process"`
+	Operator        string    `json:"operator"`
 	Sender_At     time.Time `gorm:"<-:update;type:timestamp;" json:"Sender_at"`
 }
 
 type CompleteRecord struct {
-	ID            int       `json:"id"`
-	Casuseproblem string    `json:"casuseproblem"`
-	Solution      string    `json:"solution"`
-	Suggestion    string    `json:"suggestion"`
+	ID            int       `gorm:"primaryKey" json:"id"`
+	Casuseproblem string    `gorm:"type:varchar(255)" json:"casuseproblem"`
+	Solution      string   	`gorm:"type:varchar(255) "json:"solution"`
+	Suggestion    string    `gorm:"type:varchar(255)" json:"suggestion"`
 	Completed_at     time.Time `gorm:"<-:update;type:timestamp;" json:"completed_at"`
 }
 
@@ -78,3 +78,4 @@ type CompleteRecord struct {
 // 	File_size      int    `json:"file_size"`
 // 	Status         int    `json:"status"`
 // }
+

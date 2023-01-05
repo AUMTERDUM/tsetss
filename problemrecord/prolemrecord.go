@@ -99,6 +99,9 @@ func GetProblemRecords(w http.ResponseWriter, r *http.Request) {
 	var problemrecords []entities.ProblemRecord
 	database.Instance.Find(&problemrecords)
 	json.NewEncoder(w).Encode(problemrecords)
+	var problemsender []entities.ProblemSender
+	database.Instance.Find(&problemsender)
+	json.NewEncoder(w).Encode(problemsender)
 }
 
 func GetProblemRecord(w http.ResponseWriter, r *http.Request) {
@@ -116,4 +119,5 @@ func BcryptId(id string) string {
 	}
 	return string(hash)
 }
+
 

@@ -55,6 +55,17 @@ func MigratePROBLEMRECORD() {
 	log.Println("Database PROBLEMRECORD Completed...")
 }
 
+func MigratePROBLEMSENDER() {
+	Instance.AutoMigrate(&entities.ProblemSender{})
+	log.Println("Database PROBLEMSENDER Completed...")
+}
+
+func MigratePROBLEMCOMPLETED() {
+	Instance.AutoMigrate(&entities.CompleteRecord{})
+	log.Println("Database PROBLEMCOMPLETED Completed...")
+}
+
+
 // func MigrateUPLOAD() {
 // 	Instance.AutoMigrate(&entities.File{})
 // 	log.Println("Database UPLOAD Completed...")

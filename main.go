@@ -39,6 +39,8 @@ func main() {
 	database.MigrateCONTACT()
 	database.MigrateANGENCY()
 	database.MigratePROBLEMRECORD()
+	database.MigratePROBLEMSENDER()
+	database.MigratePROBLEMCOMPLETED()
 	///database.MigrateUPLOAD()
 
 	// Initialize the router
@@ -89,6 +91,9 @@ func RegisterProductRoutes(router *mux.Router) {
 	router.HandleFunc("/problemrecord", problemrecord.CreateProblemRecord).Methods("POST")
 	router.HandleFunc("/problemrecords", problemrecord.GetProblemRecords).Methods("GET")
 	router.HandleFunc("/problemrecord/{id}", problemrecord.GetProblemRecord).Methods("GET")
+	router.HandleFunc("/problemsender", problemrecord.SenderProblem).Methods("POST")
+	router.HandleFunc("/problemcompleted", problemrecord.ProblemCompleted).Methods("POST")
+	router.HandleFunc("/publiclink", problemrecord.PublicLink).Methods("GET")
 	//router.HandleFunc("/problemrecord/upload", problemrecord.Uploadfile).Methods("POST")
 
 }
