@@ -5,10 +5,10 @@ import (
 )
 
 type User struct {
-	ID       int    `json:"id"`
-	Name     string `json:"name"`
-	Nickname string `json:"nickname"`
-	Systems  string `json:"systems"`
+	ID       int    `gorm:"primaryKey" json:"id"`
+	Name     string `gorm:"type:varchar(50)" json:"name"`
+	Nickname string `gorm:"type:varchar(50)" json:"nickname"`
+	Systems  string `gorm:"type:varchar(50)" json:"systems"`
 }
 
 type System struct {
@@ -38,7 +38,7 @@ type Agency struct {
 }
 
 type ProblemRecord struct {
-	ID              int       `json:"id"`
+	ID              int    `gorm:"primaryKey" json:"id"`
 	Agency          string    `json:"agency"`
 	Contact         string    `json:"contact"`
 	Informer        string    `json:"informer"`
@@ -52,21 +52,22 @@ type ProblemRecord struct {
 	File_extension  string `json:"file_extension"`
 	File_size       int    `json:"file_size"`
 	Status          int    `json:"status"`
+	CreatedAt       time.Time `gorm:"<-:create;type:timestamp;" json:"created_at"`
 
 }
 
 type ProblemSender struct {
-	ID         int       `json:"id"`
-	process    string    `json:"process"`
-	process_at time.Time `json:"process_at"`
+	ID              int    	`gorm:"primaryKey" json:"id"`
+	Process   		string   `gorm:"type:varchar(255)" json:"process"`
+	Sender_At     time.Time `gorm:"<-:update;type:timestamp;" json:"Sender_at"`
 }
 
 type CompleteRecord struct {
 	ID            int       `json:"id"`
-	casuseproblem string    `json:"casuseproblem"`
-	solution      string    `json:"solution"`
-	suggestion    string    `json:"suggestion"`
-	complete_at   time.Time `json:"complete_at"`
+	Casuseproblem string    `json:"casuseproblem"`
+	Solution      string    `json:"solution"`
+	Suggestion    string    `json:"suggestion"`
+	Completed_at     time.Time `gorm:"<-:update;type:timestamp;" json:"completed_at"`
 }
 
 // type File struct {

@@ -10,13 +10,23 @@ import (
 	"os"
 	"path"
 	"path/filepath"
-
+	"golang.org/x/crypto/bcrypt"
 	"github.com/gorilla/mux"
 )
 
 //use form-data
 
 func CreateProblemRecord(w http.ResponseWriter, r *http.Request) {
+	// BcryptId := r.Header.Get("problem_records")
+	// var user entities.ProblemRecord
+	// database.Instance.Where("id = ?", BcryptId).First(&user)
+	// if user.ID == BcryptId { 
+	// 	fmt.Println("User is authenticated")
+	// } else {
+	// 	fmt.Println("User is not authenticated")
+	// }
+
+
 
 	//var problemrecord entities.ProblemRecord
 	//_ = json.NewDecoder(r.Body).Decode(&problemrecord)
@@ -53,6 +63,7 @@ func CreateProblemRecord(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer dest.Close()
+	
 	agency := r.FormValue("agency")
 	contact := r.FormValue("contact")
 	problem := r.FormValue("problem")
@@ -61,6 +72,7 @@ func CreateProblemRecord(w http.ResponseWriter, r *http.Request) {
 	informermessage := r.FormValue("informermessage")
 	system := r.FormValue("system")
 	problemtype := r.FormValue("problemtype")
+	
 	w.Header().Set("Content-Type", "application/json")
 
 	problemrecord := entities.ProblemRecord{
@@ -95,3 +107,13 @@ func GetProblemRecord(w http.ResponseWriter, r *http.Request) {
 	database.Instance.First(&problemrecord, params["id"])
 	json.NewEncoder(w).Encode(problemrecord)
 }
+
+//func bcrypt id
+func BcryptId(id string) string {
+	hash, err := bcrypt.GenerateFromPassword([]byte(id), bcrypt.DefaultCost)
+	if err != nil {
+		panic(err)
+	}
+	return string(hash)
+}
+
