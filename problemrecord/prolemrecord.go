@@ -12,9 +12,15 @@ import (
 	"path/filepath"
 	"golang.org/x/crypto/bcrypt"
 	"github.com/gorilla/mux"
+	
 )
 
 //use form-data
+
+// func (book *entities.ProblemRecord) BeforeCreate(tx *gorm.DB) (err error) {
+//     book.ID = uuid.New().String()
+// 	return
+// }
 
 func CreateProblemRecord(w http.ResponseWriter, r *http.Request) {
 	// BcryptId := r.Header.Get("problem_records")
@@ -95,6 +101,7 @@ func CreateProblemRecord(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(&problemrecord)
 }
 
+
 func GetProblemRecords(w http.ResponseWriter, r *http.Request) {
 	var problemrecords []entities.ProblemRecord
 	database.Instance.Find(&problemrecords)
@@ -103,6 +110,10 @@ func GetProblemRecords(w http.ResponseWriter, r *http.Request) {
 	database.Instance.Find(&problemsender)
 	json.NewEncoder(w).Encode(problemsender)
 }
+
+
+
+
 
 func GetProblemRecord(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)

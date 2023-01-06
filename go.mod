@@ -3,6 +3,7 @@ module golang-crud-rest-api
 go 1.18
 
 require (
+	github.com/google/uuid v1.1.2
 	github.com/gorilla/mux v1.8.0
 	github.com/rs/cors v1.8.2
 	golang.org/x/crypto v0.0.0-20220525230936-793ad666bf5e

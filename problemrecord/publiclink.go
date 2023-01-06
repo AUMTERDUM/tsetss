@@ -2,10 +2,9 @@ package problemrecord
 
 import (
 	"encoding/json"
-	"net/http"
-
 	"golang-crud-rest-api/database"
 	"golang-crud-rest-api/entities"
+	"net/http"
 )
 
 func PublicLink(w http.ResponseWriter, r *http.Request) {
@@ -18,4 +17,8 @@ func PublicLink(w http.ResponseWriter, r *http.Request) {
 	var problemcompleted []entities.CompleteRecord
 	database.Instance.Find(&problemcompleted)
 	json.NewEncoder(w).Encode(problemcompleted)
+
+	//calculate time
+	// Calculate the difference between two times
+
 }
