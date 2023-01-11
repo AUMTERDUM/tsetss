@@ -77,39 +77,46 @@ import (
 
 //convert to fiber
 
-func CreateContact(c *fiber.Ctx) {
+func CreateContact(c *fiber.Ctx) error {
 	c.Set("Content-Type", "application/json")
 	var product entities.Contact
 	c.BodyParser(&product)
 	database.Instance.Create(&product)
 	c.JSON(product)
+
+	return nil
 }
 
-func GetContactById(c *fiber.Ctx) {
+func GetContactById(c *fiber.Ctx) error {
 	productId := c.Params("id")
 	if checkIfContactExists(productId) == false {
 		c.JSON("Product Not Found!")
-		return
+		return nil
 	}
 	var product entities.Contact
 	database.Instance.First(&product, productId)
 	c.Set("Content-Type", "application/json")
 	c.JSON(product)
-}
 
-func GetContacts(c *fiber.Ctx) {
+	return nil
+}	
+
+
+func GetContacts(c *fiber.Ctx) error {
 	var products []entities.Contact
 	database.Instance.Find(&products)
 	c.Set("Content-Type", "application/json")
 	c.Status(200)
 	c.JSON(products)
+
+	return nil
 }
 
-func UpdateContact(c *fiber.Ctx) {
+func UpdateContact(c *fiber.Ctx) error {
 	productId := c.Params("id")
 	if checkIfContactExists(productId) == false {
 		c.JSON("Product Not Found!")
-		return
+		//return nil
 	}
 	var product entities.Contact
 	database.Instance.First(&product, productId)
@@ -117,19 +124,22 @@ func UpdateContact(c *fiber.Ctx) {
 	database.Instance.Save(&product)
 	c.Set("Content-Type", "application/json")
 	c.JSON(product)
+
+	return nil
 }
 
-func DeleteContact(c *fiber.Ctx) {
+func DeleteContact(c *fiber.Ctx) error {
 	c.Set("Content-Type", "application/json")
 	productId := c.Params("id")
 	if checkIfContactExists(productId) == false {
 		c.Status(404)
 		c.JSON("Product Not Found!")
-		return
 	}
 	var product entities.Contact
 	database.Instance.Delete(&product, productId)
 	c.JSON("Product Deleted Successfully!")
+
+	return nil
 }
 
 func checkIfContactExists(productId string) bool {

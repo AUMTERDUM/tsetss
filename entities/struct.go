@@ -56,7 +56,16 @@ type ProblemRecord struct {
 	File_extension  string `json:"file_extension"`
 	File_size       int    `json:"file_size"`
 	Status          int    `json:"status"`
-	CreatedAt       time.Time `gorm:"<-:create;type:timestamp;" json:"created_at"`
+	Casuseproblem string    `gorm:"type:varchar(255)" json:"casuseproblem"`
+	Solution      string   	`gorm:"type:varchar(255)" json:"solution"`
+	Suggestion    string    `gorm:"type:varchar(255)" json:"suggestion"`
+	Operator        string  `gorm:"type:varchar(50)" json:"operator"`
+
+	CreatedAt       time.Time `gorm:"<-:crate;type:timestamp" json:"created_at"`
+	//SenderAt     	time.Time `gorm:"<-:update;type:timestamp" json:"sender_at"`
+	SenderAt time.Time `gorm:"column:sender_at;type:TIMESTAMP;DEFAULT:CURRENT_TIMESTAMP;not null;" json:"sender_at"`
+	// UpdatedAt time.Time `gorm:"<-:update;type:timestamp;column:sender_at" json:"updated_at"`
+	CompletedAt     time.Time `gorm:"column:completed_at;type:TIMESTAMP;DEFAULT:CURRENT_TIMESTAMP;not null;" json:"completed_at"`
 
 }
 
@@ -66,20 +75,6 @@ func (book *ProblemRecord) BeforeCreate(tx *gorm.DB) (err error) {
 	uuid := strings.Replace(uuidWithHyphen.String(), "-", "", -1)
 	book.ID = uuid
 	return
-}
-
-type ProblemSender struct {
-	ID              int    	`gorm:"primaryKey" json:"id"`
-	Operator        string    `json:"operator"`
-	Sender_At     time.Time `gorm:"<-:update;type:timestamp;" json:"Sender_at"`
-}
-
-type CompleteRecord struct {
-	ID            int       `gorm:"primaryKey" json:"id"`
-	Casuseproblem string    `gorm:"type:varchar(255)" json:"casuseproblem"`
-	Solution      string   	`gorm:"type:varchar(255) "json:"solution"`
-	Suggestion    string    `gorm:"type:varchar(255)" json:"suggestion"`
-	Completed_at     time.Time `gorm:"<-:update;type:timestamp;" json:"completed_at"`
 }
 
 type TimeWork struct {
