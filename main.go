@@ -107,7 +107,7 @@ func RegisterProductRoutesfiber(router *fiber.App) {
 	router.Patch("/status/:id", settings.UpdateStatus)
 	router.Delete("/status/:id", settings.DeleteStatus)
 
-	
+	router.Get("/time/:id", problemrecord.CalculateTime)
 	router.Post("/problemrecord", problemrecord.CreateProblemRecord)
 	router.Get("/problemrecords", problemrecord.GetProblemRecords)
 	router.Get("/problemrecord/:id", problemrecord.GetProblemRecord)

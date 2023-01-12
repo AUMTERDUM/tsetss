@@ -189,11 +189,30 @@ func CompletedProblemRecord(c *fiber.Ctx) error {
 		"message": "Error Update File",
 		})
 		}
-
+	
 	return c.JSON(fiber.Map{ "casuseproblem": problemrecord.Casuseproblem, "solution": problemrecord.Solution, "suggestion": problemrecord.Suggestion, "status": problemrecord.Status, "completed_at": problemrecord.CompletedAt, "message": "Update Successfully"})
 	//database.Instance.Where("id = ?",id).Save(&problemrecord)
 	//return c.JSON(problemrecord)
 }
+
+//calculate time
+
+func CalculateTime(c *fiber.Ctx) error {
+	id := c.Params("id")
+	var problemrecord entities.ProblemRecord
+	database.Instance.Where("id = ?",id).Find(&problemrecord)
+	c.Set("Content-Type", "application/json")
+	c.JSON(problemrecord)
+	fmt.Println(problemrecord.CreatedAt.Sub(problemrecord.CompletedAt).Hours()) // 1.5 hours difference between the two times in hours (1.5) 
+	fmt.Println(problemrecord.CreatedAt.Sub(problemrecord.CompletedAt).Minutes()) // 90 minutes difference between the two times in minutes (90)
+	fmt.Println(problemrecord.CreatedAt.Sub(problemrecord.CompletedAt).Seconds()) // 5400 seconds difference between the two times in seconds (5400)
+
+
+	return c.JSON(problemrecord)
+}
+
+
+
 
 
 func DeleteProblemRecord(c *fiber.Ctx) error {
