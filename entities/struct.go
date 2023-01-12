@@ -77,13 +77,6 @@ func (book *ProblemRecord) BeforeCreate(tx *gorm.DB) (err error) {
 	return
 }
 
-type TimeWork struct {
-	ID            int       `gorm:"primaryKey" json:"id"`
-	Operator      string    `gorm:"type:varchar(255)" json:"operator"`
-	Worktime      string    `gorm:"type:varchar(255)" json:"worktime"`
-}
-
-
  type Status struct {
 	ID  int    `json:"id"`
 	Name string `json:"name"`
