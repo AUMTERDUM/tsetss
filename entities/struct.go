@@ -55,7 +55,7 @@ type ProblemRecord struct {
 	Path_file       string `json:"path_file"`
 	File_extension  string `json:"file_extension"`
 	File_size       int    `json:"file_size"`
-	Status          int    `json:"status"`
+	Status          string   `json:"status"`
 	Casuseproblem string    `gorm:"type:varchar(255)" json:"casuseproblem"`
 	Solution      string   	`gorm:"type:varchar(255)" json:"solution"`
 	Suggestion    string    `gorm:"type:varchar(255)" json:"suggestion"`
@@ -84,13 +84,12 @@ type TimeWork struct {
 }
 
 
+ type Status struct {
+	ID  int    `json:"id"`
+	Name string `json:"name"`
+}
 
-// type File struct {
-// 	Id             int    `json:"id"`
-// 	File_name      string `json:"file_name"`
-// 	Path_file      string `json:"path_file"`
-// 	File_extension string `json:"file_extension"`
-// 	File_size      int    `json:"file_size"`
-// 	Status         int    `json:"status"`
-// }
+
+
+
 

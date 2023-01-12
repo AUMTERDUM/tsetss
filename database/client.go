@@ -55,6 +55,11 @@ func MigratePROBLEMRECORD() {
 	log.Println("Database PROBLEMRECORD Completed...")
 }
 
+func MigrateSTATUS() {
+	Instance.AutoMigrate(&entities.Status{})
+	log.Println("Database STATUS Completed...")
+}
+
 
 
 
