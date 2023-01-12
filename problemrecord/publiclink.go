@@ -6,13 +6,15 @@ import (
 	"golang-crud-rest-api/entities"
 	//"net/http"
 	"github.com/gofiber/fiber/v2"
+
 )
 
+func PublicLink(c *fiber.Ctx) error {
+	id := c.Params("id")
+	var problemrecord entities.ProblemRecord
+	database.Instance.Where("id = ?",id).Find(&problemrecord)
+	c.Set("Content-Type", "application/json")
+	c.JSON(problemrecord)
 
-func PublicLink(c *fiber.Ctx) error {//func PublicLink(w http.ResponseWriter, r *http.Request) {
-	var problemrecords []entities.ProblemRecord
-	database.Instance.Find(&problemrecords)//.Where("problem_id = ?", problemid)
-	c.JSON(problemrecords)
-	return nil
-	
-}	
+	return c.JSON(problemrecord)
+}

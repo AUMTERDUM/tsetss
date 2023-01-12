@@ -111,7 +111,7 @@ func RegisterProductRoutesfiber(router *fiber.App) {
 	router.Post("/problemrecord", problemrecord.CreateProblemRecord)
 	router.Get("/problemrecords", problemrecord.GetProblemRecords)
 	router.Get("/problemrecord/:id", problemrecord.GetProblemRecord)
-	router.Get("/publiclink", problemrecord.PublicLink)
+	router.Get("/publiclink/:id", problemrecord.PublicLink)
 	router.Patch("/problemupdate/:id", problemrecord.UpdateProblemRecord)
 	router.Patch("/problemcompleted/:id", problemrecord.CompletedProblemRecord)
 	router.Get("/problemrecordbyagency/:id", problemrecord.GetProblemRecordByAgency)

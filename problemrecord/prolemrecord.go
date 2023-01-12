@@ -88,10 +88,10 @@ func CreateProblemRecord(c *fiber.Ctx) error {
 	// database.Instance.Create(&problemrecord)
 	// c.Set("Content-Type", "application/json")
 	// return c.JSON(problemrecord)
-
-	c.Set("Content-Type", "application/json")
 	database.Instance.Create(&problemrecord)
-	return c.JSON(problemrecord)
+	return c.JSON(fiber.Map{ "id": problemrecord.ID,"file_name": problemrecord.File_name, "path_file": problemrecord.Path_file, "agency": problemrecord.Agency, "contact": problemrecord.Contact, "problem": problemrecord.Problem, "level": problemrecord.Level, "informer": problemrecord.Informer, "informermessage": problemrecord.Informermessage, "system": problemrecord.System, "problemtype": problemrecord.Problemtype, "created_at": problemrecord.CreatedAt, "status": problemrecord.Status, "file_extension": problemrecord.File_extension, "file_size": problemrecord.File_size, "message": "Create Successfully"})
+	
+	//return c.JSON(problemrecord)
 
 }
 
@@ -109,11 +109,11 @@ func GetProblemRecords(c *fiber.Ctx) error {
 func GetProblemRecord(c *fiber.Ctx) error {
 	id := c.Params("id")
 	var problemrecord entities.ProblemRecord
-	database.Instance.First(&problemrecord, id)
+	database.Instance.Where("id = ?",id).Find(&problemrecord)
 	c.Set("Content-Type", "application/json")
 	c.JSON(problemrecord)
 
-	return nil
+	return c.JSON(problemrecord)
 }
 
 
@@ -149,9 +149,10 @@ func UpdateProblemRecord(c *fiber.Ctx) error {
 		})
 		}
 
+	return c.JSON(fiber.Map{ "operator": problemrecord.Operator, "status": problemrecord.Status, "sender_at": problemrecord.SenderAt, "message": "Update Successfully"})
 	// database.Instance.Save(&problemrecord)
-	return c.JSON(problemrecord)
-
+	//return c.JSON(problemrecord)
+	
 	
 }
 
@@ -189,9 +190,9 @@ func CompletedProblemRecord(c *fiber.Ctx) error {
 		})
 		}
 
-
+	return c.JSON(fiber.Map{ "casuseproblem": problemrecord.Casuseproblem, "solution": problemrecord.Solution, "suggestion": problemrecord.Suggestion, "status": problemrecord.Status, "completed_at": problemrecord.CompletedAt, "message": "Update Successfully"})
 	//database.Instance.Where("id = ?",id).Save(&problemrecord)
-	return c.JSON(problemrecord)
+	//return c.JSON(problemrecord)
 }
 
 
