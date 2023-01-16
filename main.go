@@ -54,7 +54,10 @@ func main() {
 	//handler := cors.Handler(router)
 
 	// router.Use(cors.New())
-	router.Use(cors.New())
+	router.Use(cors.New(cors.Config	{
+		AllowOrigins: "*",
+		AllowHeaders: "Origin, Content-Type, Accept",
+	}))
 
 	// router.Use(cors.New(cors.Config{
 	// 	AllowOrigins: []string{"*"},
@@ -65,6 +68,8 @@ func main() {
 	// Start the server
 	log.Printf("Starting Server on port %s\n", AppConfig.Port)
 	log.Fatal(router.Listen(fmt.Sprintf(":%s", AppConfig.Port)))
+	
+	
 
 }
 
@@ -114,6 +119,8 @@ func RegisterProductRoutesfiber(router *fiber.App) {
 	router.Get("/publiclink/:id", problemrecord.PublicLink)
 	router.Patch("/problemupdate/:id", problemrecord.UpdateProblemRecord)
 	router.Patch("/problemcompleted/:id", problemrecord.CompletedProblemRecord)
+	router.Patch("/problemrecordcancal/:id", problemrecord.CancalProblemRecord)
+
 	router.Get("/problemrecordbyagency/:id", problemrecord.GetProblemRecordByAgency)
 	router.Get("/problemrecordbycontact/:id", problemrecord.GetProblemRecordByContact)
 	router.Get("/problemrecordbylevel/:id", problemrecord.GetProblemRecordByLevel)
@@ -122,7 +129,7 @@ func RegisterProductRoutesfiber(router *fiber.App) {
 	router.Get("/problemrecordbyimformer/:id", problemrecord.GetProblemRecordByInformer)
 	router.Get("/problemrecordbyimformermessage/:id", problemrecord.GetProblemRecordByInformermessage)
 	router.Get("/problemrecordbyproblemtype/:id", problemrecord.GetProblemRecordByProblemtype)
-
+ 
 	
 
 

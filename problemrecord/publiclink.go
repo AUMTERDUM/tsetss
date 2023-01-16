@@ -15,6 +15,6 @@ func PublicLink(c *fiber.Ctx) error {
 	database.Instance.Where("id = ?",id).Find(&problemrecord)
 	c.Set("Content-Type", "application/json")
 	c.JSON(problemrecord)
-
+	
 	return c.JSON(problemrecord)
 }

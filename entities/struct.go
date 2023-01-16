@@ -55,7 +55,7 @@ type ProblemRecord struct {
 	Path_file       string `json:"path_file"`
 	File_extension  string `json:"file_extension"`
 	File_size       int    `json:"file_size"`
-	Status          string   `json:"status"`
+	Status          int   `json:"status"`
 	Casuseproblem string    `gorm:"type:varchar(255)" json:"casuseproblem"`
 	Solution      string   	`gorm:"type:varchar(255)" json:"solution"`
 	Suggestion    string    `gorm:"type:varchar(255)" json:"suggestion"`
@@ -66,6 +66,7 @@ type ProblemRecord struct {
 	SenderAt time.Time `gorm:"column:sender_at;type:TIMESTAMP;DEFAULT:CURRENT_TIMESTAMP;not null;" json:"sender_at"`
 	// UpdatedAt time.Time `gorm:"<-:update;type:timestamp;column:sender_at" json:"updated_at"`
 	CompletedAt     time.Time `gorm:"column:completed_at;type:TIMESTAMP;DEFAULT:CURRENT_TIMESTAMP;not null;" json:"completed_at"`
+	Time 		  int       `json:"timesla"`
 
 }
 
@@ -82,6 +83,18 @@ func (book *ProblemRecord) BeforeCreate(tx *gorm.DB) (err error) {
 	Name string `json:"name"`
 }
 
+type Pageination struct {
+	Page  int `json:"page"`
+	Limit int `json:"limit"`
+	Pages int `json:"pages"`
+	TotalRow int64 `json:"total_row"`
+	
+}
+
+type Meta struct {
+	Pageination Pageination `json:"pageination"`
+	ProblemRecord []ProblemRecord `json:"problemrecord"`
+}
 
 
 

@@ -10,6 +10,11 @@ import (
 	"path"
 	"path/filepath"
 	"time"
+	"strconv"
+	//sqldriver 
+	//"database/sql/driver"
+	"math"
+	
 
 	//"golang.org/x/crypto/bcrypt"
 	//"github.com/gorilla/mux"
@@ -24,7 +29,7 @@ func CreateProblemRecord(c *fiber.Ctx) error {
 			"message": err.Error(),
 		})
 	}
-
+		
 
 	//get file name
 	fileName := file.Filename
@@ -79,7 +84,7 @@ func CreateProblemRecord(c *fiber.Ctx) error {
 		System:          system,
 		Problemtype:     problemtype,
 		CreatedAt: 		 time.Now(),
-		Status:          "รับเรื่องแล้ว",
+		Status:          1,
 
 		File_extension: ext,
 		File_size:      int(size),
@@ -97,14 +102,15 @@ func CreateProblemRecord(c *fiber.Ctx) error {
 
 
 func GetProblemRecords(c *fiber.Ctx) error {
-	var problemrecords []entities.ProblemRecord
-	database.Instance.Find(&problemrecords)
+	//var problemrecords []entities.ProblemRecord 
+	var repo entities.Meta
+	database.Instance.Find(&repo.ProblemRecord)
 	c.Set("Content-Type", "application/json")
-	c.JSON(problemrecords)
-	return nil
+	
+	repo.Pageination = Pagination(c)
+	c.JSON(repo)
+	return c.JSON(repo)
 }
-
-
 
 func GetProblemRecord(c *fiber.Ctx) error {
 	id := c.Params("id")
@@ -132,7 +138,7 @@ func UpdateProblemRecord(c *fiber.Ctx) error {
 	problemrecord := entities.ProblemRecord{
 		Operator:        operator,
 		SenderAt: 	  time.Now(),
-		Status:        "ส่งผู้ดูแลระบบแล้ว",
+		Status:        2,
 
 	}
 	
@@ -161,6 +167,7 @@ func CompletedProblemRecord(c *fiber.Ctx) error {
 	Casuseproblem := c.FormValue("casuseproblem")
 	Solution := c.FormValue("solution")
 	Suggestion := c.FormValue("suggestion")
+
 	var data_problem entities.ProblemRecord
 	database.Instance.Where("id = ?",id).Find(&data_problem)
 	fmt.Println(data_problem.ID)
@@ -175,7 +182,8 @@ func CompletedProblemRecord(c *fiber.Ctx) error {
 		Solution:          Solution,
 		Suggestion:          Suggestion,
 		CompletedAt: 	  time.Now(),
-		Status:          "ปิดงานแล้ว",
+		Status:          3,
+		
 
 	}
 	
@@ -195,6 +203,40 @@ func CompletedProblemRecord(c *fiber.Ctx) error {
 	//return c.JSON(problemrecord)
 }
 
+func CancalProblemRecord(c *fiber.Ctx) error {
+	id := c.Params("id")
+	var data_problem entities.ProblemRecord
+	database.Instance.Where("id = ?",id).Find(&data_problem)
+	fmt.Println(data_problem.ID)
+	if id != data_problem.ID {
+	
+		return c.Status(http.StatusNotFound).JSON(fiber.Map{
+			"message": "Record not found",
+		})
+	}
+	problemrecord := entities.ProblemRecord{
+		CompletedAt: 	  time.Now(),
+		Status:          4,
+	 
+	}
+	
+	if err := c.BodyParser(&problemrecord); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": err.Error(),
+		})
+	}
+	if database.Instance.Where("id = ?", id).Updates(&problemrecord).RowsAffected == 0 {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+		"message": "Error Update File",
+		})
+		}
+	
+	return c.JSON(fiber.Map{ "status": problemrecord.Status, "completed_at": problemrecord.CompletedAt, "message": "Update Successfully"})
+	//database.Instance.Where("id = ?",id).Save(&problemrecord)
+	//return c.JSON(problemrecord)
+}
+
+
 //calculate time
 
 func CalculateTime(c *fiber.Ctx) error {
@@ -210,9 +252,6 @@ func CalculateTime(c *fiber.Ctx) error {
 
 	return c.JSON(problemrecord)
 }
-
-
-
 
 
 func DeleteProblemRecord(c *fiber.Ctx) error {
@@ -328,4 +367,64 @@ func GetProblemRecordByProblemdescription(c *fiber.Ctx) error {
 	c.JSON(problemrecord)
 	return nil
 }
+//pagination
 
+func Pagination (c *fiber.Ctx) entities.Pageination {
+	var problemrecord entities.ProblemRecord
+	var total_row int64
+	var page, limit int
+	var err error
+	page, err = strconv.Atoi(c.Query("page", "1"))
+	if err != nil {
+		page = 1
+	}
+	limit, err = strconv.Atoi(c.Query("limit", "10"))
+	if err != nil {
+		limit = 10
+	}
+	offset := (page - 1) * limit
+	database.Instance.Model(&problemrecord).Count(&total_row)
+	database.Instance.Limit(limit).Offset(offset).Find(&problemrecord)
+
+	return entities.Pageination{
+		Page: page,
+		Limit: limit,
+		Pages: int(math.Ceil(float64(total_row) / float64(limit))),
+		TotalRow: total_row,
+	}
+}
+
+
+// func Pagination (c *fiber.Ctx) error {
+// 	var problemrecord entities.ProblemRecord
+// 	db := database.Instance
+// 	sql := "SELECT * FROM problemrecord"
+
+// 	if s := c.Query("s"); s != "" {
+// 		sql = fmt.Sprintf("SELECT * FROM problemrecord WHERE agency LIKE '%%%s%%' OR contact LIKE '%%%s%%' OR problem LIKE '%%%s%%' OR level LIKE '%%%s%%' OR informer LIKE '%%%s%%' OR informermessage LIKE '%%%s%%' OR system LIKE '%%%s%%' OR problemtype LIKE '%%%s%%' OR problemstatus LIKE '%%%s%%' OR problemtime LIKE '%%%s%%' OR problemdescription LIKE '%%%s%%'",sql, s, s, s, s, s, s, s, s, s, s, s)
+// 	}
+
+// 	if sort := c.Query("sort"); sort != "" {
+// 		sql = fmt.Sprintf("%s ORDER BY %s", sql, sort)
+// 	}
+
+// 	page, _ := strconv.Atoi(c.Query("page", "1"))
+// 	perPage := 10
+// 	var total int64
+	
+// 	db.Rew(sql).Count(&total)
+
+
+// 	sql = fmt.Sprintf("%s LIMIT %d OFFSET %d", sql, perPage, (page-1)*perPage)
+
+// 	db.Rew(sql).Scan(&problemrecord)
+	
+
+// 	return c.JSON(fiber.Map{
+// 		"data": problemrecord,
+// 		"meta": fiber.Map{
+// 			"page":  page,
+// 			"limit": perPage,
+// 			"total": total,
+// 		},
+// 	})
