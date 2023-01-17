@@ -9,18 +9,18 @@ import (
 	"os"
 	"path"
 	"path/filepath"
-	"time"
 	"strconv"
-	//sqldriver 
+	"strings"
+	"time"
+
+	//sqldriver
 	//"database/sql/driver"
 	"math"
-	
 
 	//"golang.org/x/crypto/bcrypt"
 	//"github.com/gorilla/mux"
 	"github.com/gofiber/fiber/v2"
 )
-
 
 func CreateProblemRecord(c *fiber.Ctx) error {
 	file, err := c.FormFile("problem_records")
@@ -29,7 +29,6 @@ func CreateProblemRecord(c *fiber.Ctx) error {
 			"message": err.Error(),
 		})
 	}
-		
 
 	//get file name
 	fileName := file.Filename
@@ -62,7 +61,7 @@ func CreateProblemRecord(c *fiber.Ctx) error {
 			"message": err.Error(),
 		})
 	}
-	
+
 	agency := c.FormValue("agency")
 	contact := c.FormValue("contact")
 	problem := c.FormValue("problem")
@@ -71,7 +70,7 @@ func CreateProblemRecord(c *fiber.Ctx) error {
 	informermessage := c.FormValue("informermessage")
 	system := c.FormValue("system")
 	problemtype := c.FormValue("problemtype")
-	
+
 	problemrecord := entities.ProblemRecord{
 		File_name:       fileName,
 		Path_file:       filePath,
@@ -83,8 +82,9 @@ func CreateProblemRecord(c *fiber.Ctx) error {
 		Informermessage: informermessage,
 		System:          system,
 		Problemtype:     problemtype,
-		CreatedAt: 		 time.Now(),
+		CreatedAt:       time.Now(),
 		Status:          1,
+		//Statusname       Statusname,
 
 		File_extension: ext,
 		File_size:      int(size),
@@ -94,54 +94,74 @@ func CreateProblemRecord(c *fiber.Ctx) error {
 	// c.Set("Content-Type", "application/json")
 	// return c.JSON(problemrecord)
 	database.Instance.Create(&problemrecord)
-	return c.JSON(fiber.Map{ "id": problemrecord.ID,"file_name": problemrecord.File_name, "path_file": problemrecord.Path_file, "agency": problemrecord.Agency, "contact": problemrecord.Contact, "problem": problemrecord.Problem, "level": problemrecord.Level, "informer": problemrecord.Informer, "informermessage": problemrecord.Informermessage, "system": problemrecord.System, "problemtype": problemrecord.Problemtype, "created_at": problemrecord.CreatedAt, "status": problemrecord.Status, "file_extension": problemrecord.File_extension, "file_size": problemrecord.File_size, "message": "Create Successfully"})
-	
+	return c.JSON(fiber.Map{"id": problemrecord.ID, "file_name": problemrecord.File_name, "path_file": problemrecord.Path_file, "agency": problemrecord.Agency, "contact": problemrecord.Contact, "problem": problemrecord.Problem, "level": problemrecord.Level, "informer": problemrecord.Informer, "informermessage": problemrecord.Informermessage, "system": problemrecord.System, "problemtype": problemrecord.Problemtype, "created_at": problemrecord.CreatedAt, "status": problemrecord.Status, "file_extension": problemrecord.File_extension, "file_size": problemrecord.File_size, "message": "Create Successfully"})
+
 	//return c.JSON(problemrecord)
 
 }
 
-
 func GetProblemRecords(c *fiber.Ctx) error {
-	//var problemrecords []entities.ProblemRecord 
+	//var problemrecords []entities.ProblemRecord
 	var repo entities.Meta
-	database.Instance.Find(&repo.ProblemRecord)
-	c.Set("Content-Type", "application/json")
-	
+	var systems []entities.System
+	// var list []entities.ProblemRecord
+	database.Instance.Preload("Statuse").Find(&repo.ProblemRecord)
+	database.Instance.Find(&systems)
+
+	// for index, data := range systems {
+	// 	fmt.Println(data.Name, index)
+	// }
+
+	for index, data := range repo.ProblemRecord {
+		repo.ProblemRecord[index].Systems = mapSystem(data.System, systems)
+	}
 	repo.Pageination = Pagination(c)
 	c.JSON(repo)
+	c.Set("Content-Type", "application/json")
 	return c.JSON(repo)
+}
+
+func mapSystem(listStr string, systems []entities.System) []entities.System {
+	list := strings.Split(listStr, ",")
+	var data []entities.System
+	for _, v := range list {
+		for _, s := range systems {
+			id, _ := strconv.Atoi(v)
+			if id == s.ID {
+				data = append(data, s)
+			}
+		}
+	}
+	return data
 }
 
 func GetProblemRecord(c *fiber.Ctx) error {
 	id := c.Params("id")
 	var problemrecord entities.ProblemRecord
-	database.Instance.Where("id = ?",id).Find(&problemrecord)
+	database.Instance.Where("id = ?", id).Find(&problemrecord)
 	c.Set("Content-Type", "application/json")
 	c.JSON(problemrecord)
 
 	return c.JSON(problemrecord)
 }
 
-
 func UpdateProblemRecord(c *fiber.Ctx) error {
 	id := c.Params("id")
 	operator := c.FormValue("operator")
 	var data_problem entities.ProblemRecord
-	database.Instance.Where("id = ?",id).Find(&data_problem)
+	database.Instance.Where("id = ?", id).Find(&data_problem)
 	fmt.Println(data_problem.ID)
 	if id != data_problem.ID {
-	
+
 		return c.Status(http.StatusNotFound).JSON(fiber.Map{
 			"message": "Record not found",
 		})
 	}
 	problemrecord := entities.ProblemRecord{
-		Operator:        operator,
-		SenderAt: 	  time.Now(),
-		Status:        2,
-
+		Operator: operator,
+		SenderAt: time.Now(),
+		Status:   2,
 	}
-	
 
 	if err := c.BodyParser(&problemrecord); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -151,15 +171,14 @@ func UpdateProblemRecord(c *fiber.Ctx) error {
 
 	if database.Instance.Where("id = ?", id).Updates(&problemrecord).RowsAffected == 0 {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-		"message": "Error Update File",
+			"message": "Error Update File",
 		})
-		}
+	}
 
-	return c.JSON(fiber.Map{ "operator": problemrecord.Operator, "status": problemrecord.Status, "sender_at": problemrecord.SenderAt, "message": "Update Successfully"})
+	return c.JSON(fiber.Map{"operator": problemrecord.Operator, "status": problemrecord.Status, "sender_at": problemrecord.SenderAt, "message": "Update Successfully"})
 	// database.Instance.Save(&problemrecord)
 	//return c.JSON(problemrecord)
-	
-	
+
 }
 
 func CompletedProblemRecord(c *fiber.Ctx) error {
@@ -169,24 +188,22 @@ func CompletedProblemRecord(c *fiber.Ctx) error {
 	Suggestion := c.FormValue("suggestion")
 
 	var data_problem entities.ProblemRecord
-	database.Instance.Where("id = ?",id).Find(&data_problem)
+	database.Instance.Where("id = ?", id).Find(&data_problem)
 	fmt.Println(data_problem.ID)
 	if id != data_problem.ID {
-	
+
 		return c.Status(http.StatusNotFound).JSON(fiber.Map{
 			"message": "Record not found",
 		})
 	}
 	problemrecord := entities.ProblemRecord{
-		Casuseproblem:        Casuseproblem,
-		Solution:          Solution,
-		Suggestion:          Suggestion,
-		CompletedAt: 	  time.Now(),
-		Status:          3,
-		
-
+		Casuseproblem: Casuseproblem,
+		Solution:      Solution,
+		Suggestion:    Suggestion,
+		CompletedAt:   time.Now(),
+		Status:        3,
 	}
-	
+
 	if err := c.BodyParser(&problemrecord); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": err.Error(),
@@ -194,11 +211,11 @@ func CompletedProblemRecord(c *fiber.Ctx) error {
 	}
 	if database.Instance.Where("id = ?", id).Updates(&problemrecord).RowsAffected == 0 {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-		"message": "Error Update File",
+			"message": "Error Update File",
 		})
-		}
-	
-	return c.JSON(fiber.Map{ "casuseproblem": problemrecord.Casuseproblem, "solution": problemrecord.Solution, "suggestion": problemrecord.Suggestion, "status": problemrecord.Status, "completed_at": problemrecord.CompletedAt, "message": "Update Successfully"})
+	}
+
+	return c.JSON(fiber.Map{"casuseproblem": problemrecord.Casuseproblem, "solution": problemrecord.Solution, "suggestion": problemrecord.Suggestion, "status": problemrecord.Status, "completed_at": problemrecord.CompletedAt, "message": "Update Successfully"})
 	//database.Instance.Where("id = ?",id).Save(&problemrecord)
 	//return c.JSON(problemrecord)
 }
@@ -206,20 +223,19 @@ func CompletedProblemRecord(c *fiber.Ctx) error {
 func CancalProblemRecord(c *fiber.Ctx) error {
 	id := c.Params("id")
 	var data_problem entities.ProblemRecord
-	database.Instance.Where("id = ?",id).Find(&data_problem)
+	database.Instance.Where("id = ?", id).Find(&data_problem)
 	fmt.Println(data_problem.ID)
 	if id != data_problem.ID {
-	
+
 		return c.Status(http.StatusNotFound).JSON(fiber.Map{
 			"message": "Record not found",
 		})
 	}
 	problemrecord := entities.ProblemRecord{
-		CompletedAt: 	  time.Now(),
-		Status:          4,
-	 
+		CompletedAt: time.Now(),
+		Status:      4,
 	}
-	
+
 	if err := c.BodyParser(&problemrecord); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": err.Error(),
@@ -227,32 +243,29 @@ func CancalProblemRecord(c *fiber.Ctx) error {
 	}
 	if database.Instance.Where("id = ?", id).Updates(&problemrecord).RowsAffected == 0 {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-		"message": "Error Update File",
+			"message": "Error Update File",
 		})
-		}
-	
-	return c.JSON(fiber.Map{ "status": problemrecord.Status, "completed_at": problemrecord.CompletedAt, "message": "Update Successfully"})
+	}
+
+	return c.JSON(fiber.Map{"status": problemrecord.Status, "completed_at": problemrecord.CompletedAt, "message": "Update Successfully"})
 	//database.Instance.Where("id = ?",id).Save(&problemrecord)
 	//return c.JSON(problemrecord)
 }
-
 
 //calculate time
 
 func CalculateTime(c *fiber.Ctx) error {
 	id := c.Params("id")
 	var problemrecord entities.ProblemRecord
-	database.Instance.Where("id = ?",id).Find(&problemrecord)
+	database.Instance.Where("id = ?", id).Find(&problemrecord)
 	c.Set("Content-Type", "application/json")
 	c.JSON(problemrecord)
-	fmt.Println(problemrecord.CreatedAt.Sub(problemrecord.CompletedAt).Hours()) // 1.5 hours difference between the two times in hours (1.5) 
+	fmt.Println(problemrecord.CreatedAt.Sub(problemrecord.CompletedAt).Hours())   // 1.5 hours difference between the two times in hours (1.5)
 	fmt.Println(problemrecord.CreatedAt.Sub(problemrecord.CompletedAt).Minutes()) // 90 minutes difference between the two times in minutes (90)
 	fmt.Println(problemrecord.CreatedAt.Sub(problemrecord.CompletedAt).Seconds()) // 5400 seconds difference between the two times in seconds (5400)
 
-
 	return c.JSON(problemrecord)
 }
-
 
 func DeleteProblemRecord(c *fiber.Ctx) error {
 	id := c.Params("id")
@@ -367,9 +380,10 @@ func GetProblemRecordByProblemdescription(c *fiber.Ctx) error {
 	c.JSON(problemrecord)
 	return nil
 }
+
 //pagination
 
-func Pagination (c *fiber.Ctx) entities.Pageination {
+func Pagination(c *fiber.Ctx) entities.Pageination {
 	var problemrecord entities.ProblemRecord
 	var total_row int64
 	var page, limit int
@@ -387,13 +401,12 @@ func Pagination (c *fiber.Ctx) entities.Pageination {
 	database.Instance.Limit(limit).Offset(offset).Find(&problemrecord)
 
 	return entities.Pageination{
-		Page: page,
-		Limit: limit,
-		Pages: int(math.Ceil(float64(total_row) / float64(limit))),
+		Page:     page,
+		Limit:    limit,
+		Pages:    int(math.Ceil(float64(total_row) / float64(limit))),
 		TotalRow: total_row,
 	}
 }
-
 
 // func Pagination (c *fiber.Ctx) error {
 // 	var problemrecord entities.ProblemRecord
@@ -411,14 +424,12 @@ func Pagination (c *fiber.Ctx) entities.Pageination {
 // 	page, _ := strconv.Atoi(c.Query("page", "1"))
 // 	perPage := 10
 // 	var total int64
-	
-// 	db.Rew(sql).Count(&total)
 
+// 	db.Rew(sql).Count(&total)
 
 // 	sql = fmt.Sprintf("%s LIMIT %d OFFSET %d", sql, perPage, (page-1)*perPage)
 
 // 	db.Rew(sql).Scan(&problemrecord)
-	
 
 // 	return c.JSON(fiber.Map{
 // 		"data": problemrecord,

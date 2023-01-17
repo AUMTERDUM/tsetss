@@ -54,7 +54,7 @@ func main() {
 	//handler := cors.Handler(router)
 
 	// router.Use(cors.New())
-	router.Use(cors.New(cors.Config	{
+	router.Use(cors.New(cors.Config{
 		AllowOrigins: "*",
 		AllowHeaders: "Origin, Content-Type, Accept",
 	}))
@@ -64,18 +64,15 @@ func main() {
 	// 	AllowHeaders: "Origin, Content-Type, Accept",
 	// 	}))
 
-	
 	// Start the server
 	log.Printf("Starting Server on port %s\n", AppConfig.Port)
-	log.Fatal(router.Listen(fmt.Sprintf(":%s", AppConfig.Port)))
-	
-	
+	log.Fatal(router.Listen(fmt.Sprintf("192.168.20.103:%s", AppConfig.Port)))
 
 }
 
-
 func RegisterProductRoutesfiber(router *fiber.App) {
 
+	router.Static("/upload", "./uploads")
 	router.Post("/user", settings.CreateUser)
 	router.Get("/users", settings.GetUsers)
 	router.Get("/users/:id", settings.GetUserById)
@@ -129,11 +126,5 @@ func RegisterProductRoutesfiber(router *fiber.App) {
 	router.Get("/problemrecordbyimformer/:id", problemrecord.GetProblemRecordByInformer)
 	router.Get("/problemrecordbyimformermessage/:id", problemrecord.GetProblemRecordByInformermessage)
 	router.Get("/problemrecordbyproblemtype/:id", problemrecord.GetProblemRecordByProblemtype)
- 
-	
-
-
-
-
 
 }
