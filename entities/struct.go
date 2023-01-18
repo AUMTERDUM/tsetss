@@ -58,7 +58,7 @@ type Agency struct {
 // 	File_extension string `json:"file_extension"`
 // 	File_size      int    `json:"file_size"`
 // 	Status         int    `json:"status"`
-// 	//Status
+// 	//Statusasdasdawdasdawd
 // 	Statusname    string `json:"statusname"`
 // 	Casuseproblem string `gorm:"type:varchar(255)" json:"casuseproblem"`
 // 	Solution      string `gorm:"type:varchar(255)" json:"solution"`
