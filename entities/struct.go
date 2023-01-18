@@ -83,7 +83,7 @@ func (book *ProblemRecord) BeforeCreate(tx *gorm.DB) (err error) {
 	uuidWithHyphen := uuid.New()
 	//limit string length to 5 characters and remove hyphen (-) from uuid string using strings.ReplaceAll() function in Go language.
 	//start useing text "TTRS" + uuid string to create unique id for each book. For example, TTRS-1a2b3c4d5e6f7g8h9i0j
-	//heeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+	//heeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeasda
 	uuid := strings.Replace(uuidWithHyphen.String(), "-", "", -1)
 	uuid = uuid[:3]
 	uuid = "TCC" + uuid
